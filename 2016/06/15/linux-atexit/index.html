@@ -1,0 +1,674 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux系统篇," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="一、atexit()函数函数名：atexit头文件：#include&amp;lt;stdlib.h&amp;gt;用法：int atexit(void (*func)(void))注意：按照ISO C的规定，一个进程可以登记多达32个函数，这些函数将由exit自动调用通常这32个函数被称为终止处理程序，并调用atexit函数来登记这些函数，atexit函数被称为终止处理程序注册程序。atexit注册的函数类型应">
+<meta name="keywords" content="Linux系统篇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="atexit()函数">
+<meta property="og:url" content="http://caochenyao.github.io/2016/06/15/linux-atexit/index.html">
+<meta property="og:site_name" content="十三&#39;s blog">
+<meta property="og:description" content="一、atexit()函数函数名：atexit头文件：#include&amp;lt;stdlib.h&amp;gt;用法：int atexit(void (*func)(void))注意：按照ISO C的规定，一个进程可以登记多达32个函数，这些函数将由exit自动调用通常这32个函数被称为终止处理程序，并调用atexit函数来登记这些函数，atexit函数被称为终止处理程序注册程序。atexit注册的函数类型应">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/atexit_1.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/atexit_2.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/atexit_3.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/atexit_4.png">
+<meta property="og:updated_time" content="2016-07-22T14:52:19.806Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="atexit()函数">
+<meta name="twitter:description" content="一、atexit()函数函数名：atexit头文件：#include&amp;lt;stdlib.h&amp;gt;用法：int atexit(void (*func)(void))注意：按照ISO C的规定，一个进程可以登记多达32个函数，这些函数将由exit自动调用通常这32个函数被称为终止处理程序，并调用atexit函数来登记这些函数，atexit函数被称为终止处理程序注册程序。atexit注册的函数类型应">
+<meta name="twitter:image" content="http://o6lb63nu0.bkt.clouddn.com/atexit_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> atexit()函数 | 十三's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">十三's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                atexit()函数
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-06-15T19:05:14+08:00" content="2016-06-15">
+              2016-06-15
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一、atexit()函数<br>函数名：atexit<br>头文件：#include&lt;stdlib.h&gt;<br>用法：int atexit(void (*func)(void))<br>注意：按照ISO C的规定，一个进程可以登记多达32个函数，这些函数将由exit自动调用通常这32个函数被称为终止处理程序，并调用atexit函数来登记这些函数，atexit函数被称为终止处理程序注册程序。atexit注册的函数类型应为不接受任何参数void函数，exit调用这些注册函数的顺序与他们登记时候的顺序相反。同一个函数若被登记多次，则也会被调用多次。其中，atexit的参数是一个函数地址。<br>如图例子：<br><img src="http://o6lb63nu0.bkt.clouddn.com/atexit_1.png" alt="1"><br>执行结果如下图：<br><img src="http://o6lb63nu0.bkt.clouddn.com/atexit_2.png" alt="2"><br>根据exit的执行过此可知，exit首先会调用各个终止处理程序，然后按需多次调用fclose(),关闭所有打开流，也就是说exit函数会执行一个标准I/O库的清理关闭操作：对所有打开的流调用fclose()，这样就会造成所有缓冲的输出数据都被冲洗即写入文件中。</p>
+<p>内核使程序执行的唯一方法是调用一个exec函数，进程自愿终止的唯一方法是显式或者隐式调用(通过exit函数)_exit()或者_Exit()函数。因此exit函数中实质是对_exit()或者_Exit()函数的封装。exit会先执行自定义的终止处理函数，然后执行I/O库函数清理函数fclose(),这也是为什么可以在终止处理函数中可以继续运用printf之类函数的原因，因为I/O库函数的流对象还没有被清除，当然可以继续运用。执行完了所有的fclose()以后，可以执行真正意义上的终止函数_exit()或者_Exit()函数。</p>
+<p>既然这里用到了exit函数，那么我们接下来就来了解一下exit函数<br>二、exit函数<br>要了解exit，首先就要知道exit函数的功能，exit函数是来终止进程的。<br>那么首先来说说进程的终止。<br>1.Linux中进程的终止<br>进程就好比人一样有其生命，我们通过fork()函数来创建一个进程，那么我们又是如何来中止进程呢。<br>进程退出表示进程即将结束。在Linux中进程退出分为了正常退出和异常退出两种。<br>1)正常退出<br>a. 在main()函数中执行return 。<br>b.调用exit()函数<br>c.调用_exit()函数<br>2)异常退出<br>a.调用about函数<br>b.进程收到某个信号，而该信号使程序终止。<br>不管是哪种退出方式，系统最终都会执行内核中的同一代码。这段代码用来关闭进程所用已打开的文件描述符，释放它所占用的内存和其他资源。<br>2.exit函数和_exit函数<br>1)exit和_exit函数都是用来终止进程的。<br>当程序执行到exit或_exit时，系统无条件的停止剩下所有操作，清除包括PCB在内的各种数据结构，并终止本进程的运行。<br>2)exit在头文件stdlib.h中声明，而_exit()声明在头文件unistd.h中声明。 exit中的参数exit_code为０代表进程正常终止，若为其他值表示程序执行过程中有错误发生。<br>3)exit()和_exit()的区别：<br>a._exit()执行后立即返回给内核，而exit()要先执行一些清除操作，然后将控制权交给内核。<br>b. 调用_exit函数时，其会关闭进程所有的文件描述符，清理内存以及其他一些内核清理函数，但不会刷新流(stdin, stdout, stderr …). exit函数是在_exit函数之上的一个封装，其会调用_exit，并在调用之前先刷新流。 </p>
+<p>exit()函数与_exit()函数最大区别就在于exit()函数在调用exit系统之前要检查文件的打开情况，把文件缓冲区的内容写回文件。由于Linux的标准函数库中，有一种被称作“缓冲I/O”的操作，其特征就是对应每一个打开的文件，在内存中都有一片缓冲区。每次读文件时，会连续的读出若干条记录，这样在下次读文件时就可以直接从内存的缓冲区读取；同样，每次写文件的时候也仅仅是写入内存的缓冲区，等满足了一定的条件（如达到了一定数量或遇到特定字符等），再将缓冲区中的内容一次性写入文件。这种技术大大增加了文件读写的速度，但也给编程代来了一点儿麻烦。比如有一些数据，认为已经写入了文件，实际上因为没有满足特定的条件，它们还只是保存在缓冲区内，这时用_exit()函数直接将进程关闭，缓冲区的数据就会丢失。因此，要想保证数据的完整性，就一定要使用exit()函数。<br>举个例子进行说明：<br>1）使用exit函数终止进程：</p>
+<pre><code> 1 #include&lt;stdio.h&gt;
+ 2 #include&lt;stdlib.h&gt;
+ 3 
+ 4 int main()
+ 5 {
+ 6     printf(&quot;exit\n&quot;);
+ 7     printf(&quot;Hello World&quot;);
+ 8 
+ 9     exit(0);
+10 }
+</code></pre><p> <img src="http://o6lb63nu0.bkt.clouddn.com/atexit_3.png" alt="3"><br>2)使用_exit函数终止进程：</p>
+<pre><code> 1 #include&lt;stdio.h&gt;
+ 2 #include&lt;unistd.h&gt;
+ 3 
+ 4 int main()
+ 5 {
+ 6     printf(&quot;_exit\n&quot;);
+ 7     printf(&quot;Hello World&quot;);
+ 8 
+ 9     _exit(0);
+10 } 
+</code></pre><p> <img src="http://o6lb63nu0.bkt.clouddn.com/atexit_4.png" alt="4"><br>在之前的博客中我们已经提到过printf刷新缓冲区的问题，这两个例子可以很明显的看出exit函数会检查文件的打开情况，将缓冲区的内容写回文件，而_exit函数则会直接关闭进程，可能导致缓冲区数据的丢失。                                                                          </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux系统篇/" rel="tag">#Linux系统篇</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/11/linux-process/" rel="next" title="进程调度算法">
+                <i class="fa fa-chevron-left"></i> 进程调度算法
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/20/linux-stickybit/" rel="prev" title="粘滞位">
+                粘滞位 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="十三先生" />
+          <p class="site-author-name" itemprop="name">十三先生</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caochenyao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5253614710/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十三先生</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

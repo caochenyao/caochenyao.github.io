@@ -1,0 +1,760 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux系统篇," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="struct file结构体定义在/linux/include/linux/fs.h(Linux 2.6.11内核)中，其原型是： struct file {         /*          * fu_list becomes invalid after file_free is called and queued via          * fu_rcuhead for RCU fre">
+<meta name="keywords" content="Linux系统篇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FILE结构体">
+<meta property="og:url" content="http://caochenyao.github.io/2016/06/24/linux-file/index.html">
+<meta property="og:site_name" content="十三&#39;s blog">
+<meta property="og:description" content="struct file结构体定义在/linux/include/linux/fs.h(Linux 2.6.11内核)中，其原型是： struct file {         /*          * fu_list becomes invalid after file_free is called and queued via          * fu_rcuhead for RCU fre">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2016-07-22T14:52:41.424Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FILE结构体">
+<meta name="twitter:description" content="struct file结构体定义在/linux/include/linux/fs.h(Linux 2.6.11内核)中，其原型是： struct file {         /*          * fu_list becomes invalid after file_free is called and queued via          * fu_rcuhead for RCU fre">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> FILE结构体 | 十三's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">十三's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                FILE结构体
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-06-24T18:20:52+08:00" content="2016-06-24">
+              2016-06-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>struct file结构体定义在/linux/include/linux/fs.h(Linux 2.6.11内核)中，其原型是：</p>
+<pre><code>struct file {
+        /*
+         * fu_list becomes invalid after file_free is called and queued via
+         * fu_rcuhead for RCU freeing
+         */
+        union {
+                struct list_head        fu_list;
+                struct rcu_head         fu_rcuhead;
+        } f_u;
+        struct path             f_path;
+#define f_dentry        f_path.dentry
+#define f_vfsmnt        f_path.mnt
+        const struct file_operations    *f_op;
+        atomic_t                f_count;
+        unsigned int            f_flags;
+        mode_t                  f_mode;
+        loff_t                  f_pos;
+        struct fown_struct      f_owner;
+        unsigned int            f_uid, f_gid;
+        struct file_ra_state    f_ra;
+        unsigned long           f_version;
+#ifdef CONFIG_SECURITY
+        void                    *f_security;
+#endif
+        /* needed for tty driver, and maybe others */
+        void                    *private_data;
+#ifdef CONFIG_EPOLL
+        /* Used by fs/eventpoll.c to link all the hooks to this file */
+        struct list_head        f_ep_links;
+        spinlock_t              f_ep_lock;
+#endif /* #ifdef CONFIG_EPOLL */
+        struct address_space    *f_mapping;
+};
+</code></pre><p>文件结构体代表一个打开的文件，系统中的每个打开的文件在内核空间都有一个关联的struct file。它由内核在打开文件时创建，并传递给在文件上进行操作的任何函数。在文件的所有实例都关闭后，内核释放这个数据结构。在内核创建和驱动源码中，struct file的指针通常被命名为file或filp。一下是对结构中的每个数据成员的解释：<br>一、</p>
+<pre><code>union {
+    struct list_head fu_list;
+    struct rcu_head rcuhead;
+}f_u;
+</code></pre><p>其中的struct list_head定义在 linux/include/linux/list.h中，原型为：</p>
+<pre><code>struct list_head {
+        struct list_head *next, *prev;
+};
+</code></pre><p>用于通用文件对象链表的指针。</p>
+<pre><code>struct rcu_head定义在linux/include/linux/rcupdate.h中，其原型为：
+/**
+* struct rcu_head - callback structure for use with RCU
+* @next: next update requests in a list
+* @func: actual update function to call after the grace period.
+*/
+struct rcu_head {
+        struct rcu_head *next;
+        void (*func)(struct rcu_head *head);
+};
+</code></pre><p>二、</p>
+<pre><code>struct path             f_path;
+</code></pre><p>被定义在linux/include/linux/namei.h中，其原型为：</p>
+<pre><code>struct path {
+        struct vfsmount *mnt;
+        struct dentry *dentry;
+};
+</code></pre><p>在早些版本的内核中并没有此结构，而是直接将path的两个数据成员作为struct file的数据成员</p>
+<pre><code>struct vfsmount *mnt的作用是指出该文件的已安装的文件系统，
+struct dentry *dentry是与文件相关的目录项对象。
+</code></pre><p>三、</p>
+<pre><code>const struct file_operations    *f_op;
+</code></pre><p>被定义在linux/include/linux/fs.h中，其中包含着与文件关联的操作，如:</p>
+<pre><code>loff_t (*llseek) (struct file *, loff_t, int);
+ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
+ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+</code></pre><p>当打开一个文件时，内核就创建一个与该文件相关联的struct file结构，其中的*f_op就指向的是具体对该文件进行操作的函数。例如用户调用系统调用read来读取该文件的内容时，那么系统调用read最终会陷入内核调用sys_read函数，而sys_read最终会调用于该文件关联的struct file结构中的f_op-&gt;read函数对文件内容进行读取。<br>四、</p>
+<pre><code>atomic_t                f_count;
+</code></pre><p>atomic_t被定义为：</p>
+<pre><code>typedef struct { volatile int counter; } atomic_t;
+</code></pre><p>volatile修饰字段告诉gcc不要对该类型的数据做优化处理，对它的访问都是对内存的访问，而不是对寄存器的访问。<br>本质是int类型，之所以这样写是让编译器对基于该类型变量的操作进行严格的类型检查。此处f_count的作用是记录对文件对象的引用计数，也即当前有多少个进程在使用该文件。<br>五、</p>
+<pre><code>unsigned int            f_flags;
+</code></pre><p>当打开文件时指定的标志，对应系统调用open的int flags参数。驱动程序为了支持非阻塞型操作需要检查这个标志。<br>六、</p>
+<pre><code>mode_t                  f_mode;
+</code></pre><p>对文件的读写模式，对应系统调用open的mod_t mode参数。如果驱动程序需要这个值，可以直接读取这个字段。<br>mod_t被定义为：</p>
+<pre><code>typedef unsigned int __kernel_mode_t;
+typedef __kernel_mode_t         mode_t;
+</code></pre><p>七、</p>
+<pre><code>loff_t                  f_pos;
+</code></pre><p>当前的文件指针位置，即文件的读写位置。<br>loff_t被定义为：</p>
+<pre><code>typedef long long       __kernel_loff_t;
+typedef __kernel_loff_t         loff_t;
+</code></pre><p>八、</p>
+<pre><code>struct fown_struct      f_owner;
+struct fown_struct在linux/include/linux/fs.h被定义，原型为:
+struct fown_struct {
+        rwlock_t lock;          /* protects pid, uid, euid fields */
+        struct pid *pid;        /* pid or -pgrp where SIGIO should be sent */
+        enum pid_type pid_type; /* Kind of process group SIGIO should be sent to */
+        uid_t uid, euid;        /* uid/euid of process setting the owner */
+        int signum;             /* posix.1b rt signal to be delivered on IO */
+};
+</code></pre><p>该结构的作用是通过信号进行I/O时间通知的数据。<br>九、</p>
+<pre><code>unsigned int            f_uid, f_gid;
+</code></pre><p>标识文件的所有者id，所有者所在组的id.<br>十、</p>
+<pre><code>struct file_ra_state    f_ra;
+struct file_ra_state结构被定义在/linux/include/linux/fs.h中，原型为：
+struct file_ra_state {
+        pgoff_t start;                  /* where readahead started */
+        unsigned long size;             /* # of readahead pages */
+        unsigned long async_size;       /* do asynchronous readahead when
+                                           there are only # of pages ahead */
+        unsigned long ra_pages;         /* Maximum readahead window */
+        unsigned long mmap_hit;         /* Cache hit stat for mmap accesses */
+        unsigned long mmap_miss;        /* Cache miss stat for mmap accesses */
+        unsigned long prev_index;       /* Cache last read() position */
+        unsigned int prev_offset;       /* Offset where last read() ended in a page */
+};
+</code></pre><p>文件预读状态，文件预读算法使用的主要数据结构，当打开一个文件时，f_ra中出了perv_page(默认为－1)和ra_apges(对该文件允许的最大预读量)这两个字段外，其他的所有西端都置为0。<br>十一、</p>
+<pre><code>unsigned long           f_version;
+</code></pre><p>记录文件的版本号，每次使用后都自动递增。<br>十二、</p>
+<pre><code>#ifdef CONFIG_SECURITY
+        void                    *f_security;
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux系统篇/" rel="tag">#Linux系统篇</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/20/linux-stickybit/" rel="next" title="粘滞位">
+                <i class="fa fa-chevron-left"></i> 粘滞位
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/25/linux-fork/" rel="prev" title="fork函数">
+                fork函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="十三先生" />
+          <p class="site-author-name" itemprop="name">十三先生</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caochenyao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5253614710/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十三先生</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

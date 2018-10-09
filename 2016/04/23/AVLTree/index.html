@@ -1,0 +1,991 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="二叉树," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="一、AVL树 AVL树又称为高度平衡的二叉搜索树，是1962年有俄罗斯的数学家G.M.Adel’son-Vel’skii和E.M.Landis提出来的。它能保持二叉树的高度平衡，尽量降低二叉树的高度，减少树的平均搜索长度。 二、AVL树的性质 1.左子树和右子树的高度之差的绝对值不超过1 2.树中的每个左子树和右子树都是AVL树 3.每个节点都有一个平衡因子(balance factor–bf),">
+<meta name="keywords" content="二叉树">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二叉平衡搜索树">
+<meta property="og:url" content="http://caochenyao.github.io/2016/04/23/AVLTree/index.html">
+<meta property="og:site_name" content="十三&#39;s blog">
+<meta property="og:description" content="一、AVL树 AVL树又称为高度平衡的二叉搜索树，是1962年有俄罗斯的数学家G.M.Adel’son-Vel’skii和E.M.Landis提出来的。它能保持二叉树的高度平衡，尽量降低二叉树的高度，减少树的平均搜索长度。 二、AVL树的性质 1.左子树和右子树的高度之差的绝对值不超过1 2.树中的每个左子树和右子树都是AVL树 3.每个节点都有一个平衡因子(balance factor–bf),">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL1.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL2.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL3.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL4.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL5.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL6.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL7.png">
+<meta property="og:updated_time" content="2016-05-21T06:04:02.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="二叉平衡搜索树">
+<meta name="twitter:description" content="一、AVL树 AVL树又称为高度平衡的二叉搜索树，是1962年有俄罗斯的数学家G.M.Adel’son-Vel’skii和E.M.Landis提出来的。它能保持二叉树的高度平衡，尽量降低二叉树的高度，减少树的平均搜索长度。 二、AVL树的性质 1.左子树和右子树的高度之差的绝对值不超过1 2.树中的每个左子树和右子树都是AVL树 3.每个节点都有一个平衡因子(balance factor–bf),">
+<meta name="twitter:image" content="http://o6lb63nu0.bkt.clouddn.com/AVL1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> 二叉平衡搜索树 | 十三's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">十三's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                二叉平衡搜索树
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-04-23T04:26:25+08:00" content="2016-04-22">
+              2016-04-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/数据结构/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一、AVL树<br> AVL树又称为高度平衡的二叉搜索树，是1962年有俄罗斯的数学家G.M.Adel’son-Vel’skii和E.M.Landis提出来的。它能保持二叉树的高度平衡，尽量降低二叉树的高度，减少树的平均搜索长度。</p>
+<p>二、AVL树的性质<br> 1.左子树和右子树的高度之差的绝对值不超过1<br> 2.树中的每个左子树和右子树都是AVL树<br> 3.每个节点都有一个平衡因子(balance factor–bf),任一节点的平衡因子是-1/0/1。(每个节点的 平衡因子等于右子树的高度减去左子树的高度)</p>
+<p>三、AVL树的效率<br>  一棵AVL树有N个节点，其高度可以保持在log2N，插入/删除/查找的时间复杂度也是log2N。<br> (ps：log2N是表示log以2为底N的对数)</p>
+<p>四、AVL树的插入<br> 这里我们只讨论AVL树的插入，每插入一个节点，从该节点的父节点向上改变平衡因子，在左子树插入，平衡因子减一，在右子树插入，平衡因子加一:<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL1.png" alt="1"><br> 当某节点的平衡因子改变后变为2或-2时，则要调整平衡因子。<br> 当某节点的平衡因子改变后变为2或-2时，我们可以分为四种情况来讨论平衡因子的调整<br> 1.情况一:改变后平衡因子情况为2，1，0时<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL2.png" alt="2"><br> <strong>注意在parent的父节点变为subR之前要将subR链在parent的原父节点之后。</strong><br> 2.情况二:改变后平衡因子情况为-2，-1，0时<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL3.png" alt="3"><br> <strong>注意在parent的父节点变为subL之前要将subL链在parent的原父节点之后。</strong><br> 3.情况三:改变后平衡因子情况为2，-1，0时<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL4.png" alt="4"><br> <strong>注意在parent的父节点变为subRL之前要将subRL链在parent的原父节点之后。</strong><br> 旋转之后需要调整平衡因子<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL5.png" alt="5"><br> 4.情况四:改变后平衡因子情况为-2，1，0时<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL6.png" alt="6"><br> <strong>注意在parent的父节点变为subLR之前要将subLR链在parent的原父节点之后。</strong><br> 旋转之后需要调整平衡因子<br> <img src="http://o6lb63nu0.bkt.clouddn.com/AVL7.png" alt="7"></p>
+<p>五、AVL树的代码实现<br> 我实现AVL树使用的是非递归的方法</p>
+<pre><code>#pragma once
+//AVL树节点的实现，这里使用的是三叉链的结构
+template&lt;class K,class V&gt;
+struct AVLTreeNode
+{
+    AVLTreeNode&lt;K, V&gt;* _left;     //左孩子
+    AVLTreeNode&lt;K, V&gt;* _right;    //右孩子
+    AVLTreeNode&lt;K, V&gt;* _parent;   //父节点
+    K _key;                       //关键字
+    V _value;                     //与关键字有关的信息
+    int _bf;                      //平衡因子
+
+    AVLTreeNode(const K&amp; key,const V&amp; value) //构造函数
+        :_left(NULL)
+        , _right(NULL)
+        , _parent(NULL)
+        , _key(key)
+        , _value(value)
+        , _bf(0)
+    {}
+};
+
+template&lt;class K,class V&gt;
+class AVLTree
+{
+    typedef AVLTreeNode&lt;K, V&gt; Node;
+public:
+    AVLTree()                           //构造函数
+        :_root(NULL)
+    {}
+public:
+    bool Insert(const K&amp; key,const V&amp; value)  //AVL树的插入
+    {
+        if (_root == NULL)
+        {
+            _root = new Node(key, value);
+            return true;
+        }
+
+        Node* parent = NULL;
+        Node* cur = _root;
+        bool Isadjust = false;
+        while (cur)                         //找到插入的位置
+        {
+            if (cur-&gt;_key &lt; key)
+            {
+                parent = cur;
+                cur = cur-&gt;_right;
+            }
+            else if (cur-&gt;_key &gt; key)
+            {
+                parent = cur;
+                cur = cur-&gt;_left;
+            }
+            else
+            {
+                return false;
+            }    
+        }
+
+        cur = new Node(key,value);         //创建新节点
+        cur-&gt;_parent = parent;             //插入新节点
+        if (cur-&gt;_key &lt; parent-&gt;_key)
+        {
+            parent-&gt;_left = cur;
+        }
+        else
+        {
+            parent-&gt;_right = cur;
+        }
+
+        while (parent)                    //由父节点向上修改平衡因子
+        {
+
+            if (cur == parent-&gt;_left)
+            {
+                parent-&gt;_bf--;
+                if (parent-&gt;_bf == 0)
+                    break;
+            }
+            else if (cur == parent-&gt;_right)
+            {
+                parent-&gt;_bf++;
+                if (parent-&gt;_bf == 0)
+                    break;
+            }
+            //当某一节点的平衡因子为2或-2时，调整平衡因子
+            if (parent-&gt;_bf &gt; 1 || parent-&gt;_bf &lt; -1)
+            {
+                Isadjust = true;
+                if (parent-&gt;_bf &gt; 1)
+                {
+                    if (parent-&gt;_right-&gt;_bf == 1)
+                    {
+                        //情况为2,1,0;为左单旋
+                        _RotateL(parent);
+                    }
+                    else if (parent-&gt;_right-&gt;_bf == -1)
+                    {
+                        //情况为2,-1,0;为右左双旋
+                        _RotateRL(parent);
+                    }
+                }
+                else
+                {
+                    if (parent-&gt;_left-&gt;_bf == -1)
+                    {
+                        //情况为-2,-1,0;为右单旋
+                        _RotateR(parent);
+                    }
+                    else if (parent-&gt;_left-&gt;_bf == 1)
+                    {
+                        //情况为-2,1,0;为为左右双旋
+                        _RotateLR(parent);
+                    }
+                }
+                if (parent-&gt;_parent == NULL)
+                {
+                    _root = parent;
+                    return true;
+                }
+            }
+
+            Node* ppNode = parent-&gt;_parent;
+            if (Isadjust &amp;&amp; ppNode)
+            {
+                if (parent-&gt;_key &lt; ppNode-&gt;_key)
+                {
+                    ppNode-&gt;_left = parent;
+                }
+                else
+                {
+                    ppNode-&gt;_right = parent;
+                }
+                return true;
+            }
+            cur = parent;
+            parent = cur-&gt;_parent;
+        }
+        return true;
+    }
+public:
+    void _RotateL(Node*&amp; parent)
+    {
+        Node* subR = parent-&gt;_right;    //parent为_bf为2的节点,subR为_bf为1的节点
+        Node* subRL = subR-&gt;_left;      //subRL为subR的左孩子
+
+        parent-&gt;_right = subRL;         //将subRL链为parent的右孩子
+        if (subRL)
+            subRL-&gt;_parent = parent;
+
+        subR-&gt;_parent = parent-&gt;_parent;//先将parent的父节点链为subR的父节点
+        parent-&gt;_parent = subR;         //再将subR作为parent的父节点
+        subR-&gt;_left = parent;
+
+        parent-&gt;_bf = subR-&gt;_bf = 0;
+        parent = subR;                  //将subR赋为parent(此处用的是引用,此处变,上面的cur也会变)
+
+    }
+    void _RotateR(Node*&amp; parent)
+    {
+        //右单旋与左单旋相似
+        Node* subL = parent-&gt;_left;
+        Node* subLR = subL-&gt;_right;
+
+        parent-&gt;_left = subLR;
+        if (subLR)
+            subLR-&gt;_parent = parent;
+
+        subL-&gt;_parent = parent-&gt;_parent;
+        parent-&gt;_parent = subL;
+        subL-&gt;_right = parent;
+
+        parent-&gt;_bf = subL-&gt;_bf = 0;
+        parent = subL;
+    }
+    void _RotateRL(Node*&amp; parent)
+    {
+        /*_RotateR(parent-&gt;_right);
+        _RotateL(parent);*/
+        Node* subR = parent-&gt;_right;
+        Node* subRL = subR-&gt;_left;
+        //右旋
+        subR-&gt;_left = subRL-&gt;_right;
+        if (subRL-&gt;_right)
+            subRL-&gt;_right-&gt;_parent = subR;
+        parent-&gt;_right = subRL;
+        subRL-&gt;_right = subR;
+        //改变平衡因子
+        if (subRL-&gt;_bf == 0 || subRL-&gt;_bf == 1)
+        {
+            subR-&gt;_bf = 0;
+        }
+        else
+        {
+            subR-&gt;_bf = 1;
+        }
+        //左旋
+        parent-&gt;_right = subRL-&gt;_left;
+        if (subRL-&gt;_left)
+            subRL-&gt;_left-&gt;_parent = parent;
+        subRL-&gt;_parent = parent-&gt;_parent;
+        subRL-&gt;_left = parent;
+        parent-&gt;_parent = subRL;
+        //改变平衡因子
+        if (subRL-&gt;_bf == 0 || subRL-&gt;_bf == -1)
+        {
+            parent-&gt;_bf = 0;
+        }
+        else
+        {
+            parent-&gt;_bf = -1;
+        }
+
+        subRL-&gt;_bf = 0;
+        parent = subRL;
+
+    }
+    void _RotateLR(Node*&amp; parent)
+    {
+        /*_RotateL(parent-&gt;_left);
+        _RotateR(parent);*/
+        Node* subL = parent-&gt;_left;
+        Node* subLR = subL-&gt;_right;
+        //左旋
+        subL-&gt;_right = subLR-&gt;_left;
+        if (subLR-&gt;_left)
+            subLR-&gt;_left-&gt;_parent = subL;
+        parent-&gt;_left = subLR;
+        subLR-&gt;_left = subL;
+        //改变平衡因子
+        if (subLR-&gt;_bf == 0 || subLR-&gt;_bf == -1)
+        {
+            subL-&gt;_bf = 0;
+        }
+        else
+        {
+            subL-&gt;_bf = -1;
+        }
+        //右旋
+        parent-&gt;_left = subLR-&gt;_right;
+        if (subLR-&gt;_right)
+            subLR-&gt;_right-&gt;_parent = parent;
+        subLR-&gt;_parent = parent-&gt;_parent;
+        subLR-&gt;_right = parent;
+        parent-&gt;_parent = subLR;
+        //改变平衡因子
+        if (subLR-&gt;_bf == 0 || subLR-&gt;_bf == 1)
+        {
+            parent-&gt;_bf = 0;
+        }
+        else
+        {
+            parent-&gt;_bf = 1;
+        }
+
+        subLR-&gt;_bf = 0;
+        parent = subLR;
+    }
+    int Hight()                   //求深度
+    {
+        return _Hight(_root);
+    }
+    bool IsBalance()              //判断是否平衡
+    {
+        return _IsBalance(_root);
+    }
+    void InOrder()
+    {
+        _InOrder(_root);
+        cout &lt;&lt; endl;
+    }
+protected:
+    void _InOrder(Node* root)
+    {
+        if (root == NULL)
+            return;
+
+        _InOrder(root-&gt;_left);
+        cout &lt;&lt; root-&gt;_key &lt;&lt; &quot; &quot;;
+        _InOrder(root-&gt;_right);
+    }
+    bool _IsBalance(Node* root)
+    {
+        if (root == NULL)
+            return true;
+
+        int left = _Hight(root-&gt;_left);
+        int right = _Hight(root-&gt;_right);
+        int poor = right-left;
+        bool IsBalance = abs(poor) &lt; 2 &amp;&amp; root-&gt;_bf == poor;
+
+        return _IsBalance(root-&gt;_left) &amp;&amp; _IsBalance(root-&gt;_right) &amp;&amp; IsBalance;
+    }
+    int _Hight(Node* root)
+    {
+        if (root == NULL)
+            return 0;
+
+        int left = _Hight(root-&gt;_left)+1;
+        int right = _Hight(root-&gt;_right)+1;
+
+        return left &gt; right ? left : right;
+    }
+protected:
+    Node* _root;
+};
+
+void Test1()
+{
+    int a[] = { 16, 3, 7, 11, 9, 26, 18, 14, 15 };
+
+    AVLTree&lt;int, int&gt; t;
+    for (int i = 0; i &lt; sizeof(a) / sizeof(int);++i)
+    {
+        t.Insert(a[i],i);
+    }
+
+    t.InOrder();
+    cout&lt;&lt;&quot;IsBalance:&quot;&lt;&lt;t.IsBalance()&lt;&lt;endl;
+}
+
+void Test2()
+{
+    int a[] = { 4, 2, 6, 1, 3, 5, 15, 7, 16, 14 };
+
+    AVLTree&lt;int, int&gt; t;
+    for (int i = 0; i &lt; sizeof(a) / sizeof(int); ++i)
+    {
+        t.Insert(a[i], i);
+    }
+
+    t.InOrder();
+    cout &lt;&lt; &quot;IsBalance:&quot; &lt;&lt; t.IsBalance() &lt;&lt; endl;
+}
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/二叉树/" rel="tag">#二叉树</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/16/BinarySearchTree/" rel="next" title="二叉搜索树">
+                <i class="fa fa-chevron-left"></i> 二叉搜索树
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/25/RBTree/" rel="prev" title="红黑树">
+                红黑树 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="十三先生" />
+          <p class="site-author-name" itemprop="name">十三先生</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caochenyao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5253614710/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十三先生</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

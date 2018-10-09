@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux系统篇," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="一、初步认识fork函数一个进程，包括代码、数据和分配给进程的资源。fork（）函数通过系统调用创建一个与原来进程几乎完全相同的进程，也就是两个进程可以做完全相同的事，但如果初始参数或者传入的变量不同，两个进程也可以做不同的事。一个进程调用fork（）函数后，系统先给新的进程分配资源，例如存储数据和代码的空间。然后把原来的进程的所有值都复制到新的新进程中，只有少数值与原来的进程的值不同。相当于克隆">
+<meta name="keywords" content="Linux系统篇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fork函数">
+<meta property="og:url" content="http://caochenyao.github.io/2016/06/25/linux-fork/index.html">
+<meta property="og:site_name" content="十三&#39;s blog">
+<meta property="og:description" content="一、初步认识fork函数一个进程，包括代码、数据和分配给进程的资源。fork（）函数通过系统调用创建一个与原来进程几乎完全相同的进程，也就是两个进程可以做完全相同的事，但如果初始参数或者传入的变量不同，两个进程也可以做不同的事。一个进程调用fork（）函数后，系统先给新的进程分配资源，例如存储数据和代码的空间。然后把原来的进程的所有值都复制到新的新进程中，只有少数值与原来的进程的值不同。相当于克隆">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/fork_1.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/fork_2.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/fork_3.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/fork_4.png">
+<meta property="og:updated_time" content="2016-07-22T14:53:08.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fork函数">
+<meta name="twitter:description" content="一、初步认识fork函数一个进程，包括代码、数据和分配给进程的资源。fork（）函数通过系统调用创建一个与原来进程几乎完全相同的进程，也就是两个进程可以做完全相同的事，但如果初始参数或者传入的变量不同，两个进程也可以做不同的事。一个进程调用fork（）函数后，系统先给新的进程分配资源，例如存储数据和代码的空间。然后把原来的进程的所有值都复制到新的新进程中，只有少数值与原来的进程的值不同。相当于克隆">
+<meta name="twitter:image" content="http://o6lb63nu0.bkt.clouddn.com/fork_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> fork函数 | 十三's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">十三's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                fork函数
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-06-25T22:28:19+08:00" content="2016-06-25">
+              2016-06-25
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一、初步认识fork函数<br>一个进程，包括代码、数据和分配给进程的资源。fork（）函数通过系统调用创建一个与原来进程几乎完全相同的进程，也就是两个进程可以做完全相同的事，但如果初始参数或者传入的变量不同，两个进程也可以做不同的事。<br>一个进程调用fork（）函数后，系统先给新的进程分配资源，例如存储数据和代码的空间。然后把原来的进程的所有值都复制到新的新进程中，只有少数值与原来的进程的值不同。相当于克隆了一个自己。<br>来看一个例子：</p>
+<pre><code> 1 #include&lt;stdio.h&gt;
+ 2 #include&lt;unistd.h&gt;
+ 3 #include&lt;stdlib.h&gt;
+ 4 
+ 5 int main()
+ 6 {
+ 7     int count = 100;
+ 8     pid_t pid = fork();
+ 9 
+10     if(pid == -1)
+11     {
+12         perror(&quot;fork error&quot;);
+13         exit(1);
+14     }
+15     else if(pid == 0)
+16     {
+17         count++;
+18         printf(&quot;child:%d,pid:%d,ppid:%d,count:%d\n&quot;,pid,getpid(),getppid(),count);
+19     }
+20     else
+21     {
+22         printf(&quot;parent:%d,pid:%d,ppid:%d,count:%d\n&quot;,pid,getpid(),getppid(),count);
+23         sleep(5);
+24     }
+25 
+26     return 0;
+27 }
+</code></pre><p>其结果如图所示：<br><img src="http://o6lb63nu0.bkt.clouddn.com/fork_1.png" alt="1"><br>如果fork成功，子进程返回的值是0，父进程返回的值是子进程的进程号。<br>而且大家可以发现，在子进程中count进行了加一，但父进程的结果显示父进程的count并没有加一。那是因为父进程创建子进程时，子进程会获得父进程数据空间、堆和栈的副本(主要是数据结构的副本)，也就是说父进程会向子进程拷贝自己的数据空间、堆和栈(主要是数据结构)。所以两者的这些部分是独立的，而两者共享的是正文段(及代码段)。所以在子进程中count++对父进程的count没有影响。</p>
+<p>二、深入了解fork函数<br>1.关于子进程通过getppid()获取的父进程进程号为1的问题<br>了解了fork函数的基本功能，再来看看这段代码：</p>
+<pre><code> 1 #include&lt;stdio.h&gt;
+ 2 #include&lt;unistd.h&gt;
+ 3 #include&lt;stdlib.h&gt;
+ 4 
+ 5 int main()
+ 6 {
+ 7     int count = 100;
+ 8     pid_t pid = fork();
+ 9 
+10     if(pid == -1)
+11     {
+12         perror(&quot;fork error&quot;);
+13         exit(1);
+14     }
+15     else if(pid == 0)
+16     {
+17         count++;
+18         printf(&quot;child:%d,pid:%d,ppid:%d,count:%d\n&quot;,pid,getpid(),getppid(),count);
+19     }
+20     else
+21     {
+22         printf(&quot;parent:%d,pid:%d,ppid:%d,count:%d\n&quot;,pid,getpid(),getppid(),count);
+23     }
+24 
+25     return 0;
+26 }
+</code></pre><p>结果如下图所示：<br><img src="http://o6lb63nu0.bkt.clouddn.com/fork_2.png" alt="2"><br>注意图中所圈的内容，子进程获取的父进程进程号为1，但其父进程的进程号却为6059，这又是什么原因呢？<br>仔细观察代码会发现虽然这个代码与之前的代码很相像，但在父进程这里少了一个sleep函数，那么说明少了这个sleep函数造成了这种现象。因为少了sleep函数，使得父进程在执行完后并没有等待子进程结束就急急忙忙退出了，此时子进程就变成了一个孤儿进程，这个孤儿进程由init接管，所以这里才显示子进程通过getppid()得到的父进程进程号为1。<br>2.关于循环fork进程<br>来看一下这段代码：</p>
+<pre><code> 1 #include&lt;stdio.h&gt;
+ 2 #include&lt;unistd.h&gt;
+ 3 #include&lt;stdlib.h&gt;
+ 4 
+ 5 int main()
+ 6 {
+ 7     int i = 0;
+ 8     pid_t pid;
+ 9 
+10     for(;i&lt;2;i++)
+11     {
+12         pid = fork();
+13         if(pid == -1)
+14         {
+15             perror(&quot;fork error&quot;);
+16             exit(1);
+17         }
+18         else if(pid == 0)
+19         {
+20             printf(&quot;child:%d,pid:%d,ppid:%d,i:%d\n&quot;,pid,getpid(),getppid(),i);
+21         }
+22         else
+23         {
+24             printf(&quot;parent:%d,pid:%d,ppid:%d,i:%d\n&quot;,pid,getpid(),getppid(),i);
+25             sleep(5);
+26         }
+27     }
+28 
+29     return 0;
+30 }
+</code></pre><p>结果如下图示：<br><img src="http://o6lb63nu0.bkt.clouddn.com/fork_3.png" alt="3"><br>一定有六条信息，分析如下图：<br><img src="http://o6lb63nu0.bkt.clouddn.com/fork_4.png" alt="4"><br>最初只有进程号为7003的进程，i=0时，该进程作为父进程创建子进程，进程号为7004；i=1时，父进程再次创建新的子进程，进程号为7006，而子进程也作为父进程创建出进程号为7005的子进程，所以最后的结果为六条信息。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux系统篇/" rel="tag">#Linux系统篇</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/24/linux-file/" rel="next" title="FILE结构体">
+                <i class="fa fa-chevron-left"></i> FILE结构体
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/14/linux-pipe/" rel="prev" title="管道内部的组织方式">
+                管道内部的组织方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="十三先生" />
+          <p class="site-author-name" itemprop="name">十三先生</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caochenyao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5253614710/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十三先生</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

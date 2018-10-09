@@ -1,0 +1,690 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux系统篇," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="一、Linux中的find命令  1.find命令的一般形式为：   find pathname -options [-print -exec -ok …]   2.find命令的参数   pathname:find命令所查找的目录路径。例如用.来表示当前目录，用/来表示根目录。   -print:find命令将匹配的文件输出到标准输出。   -exec:find命令对匹配的文件执行该参数所给出的">
+<meta name="keywords" content="Linux系统篇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux find命令和atime&#x2F;ctime&#x2F;mtime">
+<meta property="og:url" content="http://caochenyao.github.io/2016/05/19/linux-1/index.html">
+<meta property="og:site_name" content="十三&#39;s blog">
+<meta property="og:description" content="一、Linux中的find命令  1.find命令的一般形式为：   find pathname -options [-print -exec -ok …]   2.find命令的参数   pathname:find命令所查找的目录路径。例如用.来表示当前目录，用/来表示根目录。   -print:find命令将匹配的文件输出到标准输出。   -exec:find命令对匹配的文件执行该参数所给出的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find1.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find2.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find3.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find4.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find5.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find6.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find7.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find8.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find9.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find10.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/find11.png">
+<meta property="og:updated_time" content="2016-07-22T14:53:47.389Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux find命令和atime&#x2F;ctime&#x2F;mtime">
+<meta name="twitter:description" content="一、Linux中的find命令  1.find命令的一般形式为：   find pathname -options [-print -exec -ok …]   2.find命令的参数   pathname:find命令所查找的目录路径。例如用.来表示当前目录，用/来表示根目录。   -print:find命令将匹配的文件输出到标准输出。   -exec:find命令对匹配的文件执行该参数所给出的">
+<meta name="twitter:image" content="http://o6lb63nu0.bkt.clouddn.com/find1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> Linux find命令和atime/ctime/mtime | 十三's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">十三's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux find命令和atime/ctime/mtime
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-05-19T23:40:28+08:00" content="2016-05-19">
+              2016-05-19
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一、Linux中的find命令<br>  1.find命令的一般形式为：<br>   find pathname -options [-print -exec -ok …]</p>
+<p>  2.find命令的参数<br>   pathname:find命令所查找的目录路径。例如用.来表示当前目录，用/来表示根目录。<br>   -print:find命令将匹配的文件输出到标准输出。<br>   -exec:find命令对匹配的文件执行该参数所给出的shell命令。相应的命令形式为’command’{} \;，注意{}和\;之间的空格。<br>   -ok:和-exec的作用相同，只不过以一种更为安全的模式来执行该参数所给出的shell命令，在执行每一个命令之前，都会给出提示，让用户来确定是否执行。</p>
+<pre><code>#print将查找到的文件输出到标准输出
+#-exec command {} \; ——将查到的文件执行command操作
+#-ok和-exec相同，只不过在操作前要询问用户
+</code></pre><p>  3.find命令选项<br>    -name<br>     按照文件名查文件<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find1.png" alt="1"><br>    -perm<br>     按照文件权限来查找文件<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find2.png" alt="2"><br>    -prune<br>     使用这一选项可以使find命令不在当前指定的目录中查找，如果同时使用-depth选项，那么-prune将被find命令忽略<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find3.png" alt="3"><br>    -user<br>     按照文件属主来查找文件<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find4.png" alt="4"><br>    -nouser<br>     查找无有效属主的文件，即该文件的属主在/etc/passwd中不存在<br>    -group<br>     按照文件所属组来查找文件<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find5.png" alt="5"><br>    -nogroup<br>     查找无有效所属组的文件，即该文件所属的组在/etc/groups中不存在<br>    -mtime -n +n<br>     按照文件的更改时间来查找文件，-n表示文件更改时间在距现在n天以内，+n表示文件更改时间距现在n天以前。find命令还有-atime和-ctime选项<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find6.png" alt="6"><br>    -newer file1 ! -newer file2<br>     查找更改时间比文件file1新但比文件file2旧的文件<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find7.png" alt="7"><br>    -type<br>     查找某一文件类型，如:<br>     b - 块设备文件<br>     d - 目录<br>     c - 字符设备文件<br>     l - 符号链接文件<br>     f - 普通文件<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find8.png" alt="8"><br>    -size n:[c]<br>     查找文件长度为n块的文件，带有c时表示文件长度以字节计<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find9.png" alt="9"><br>    -depth<br>     在查找文件时，首先查找当期目录中的文件，然后再在其子目录中查找<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find10.png" alt="10"><br>    -fstype<br>     查找位于某一类型文件系统中的文件，这些文件系统类型通常可以在配置文件/etc/ fstab中找到，该配置文件中包含了本系统中有关文件系统的信息<br>    -mount<br>     在查找文件时不跨越文件系统mount点<br>     <img src="http://o6lb63nu0.bkt.clouddn.com/find11.png" alt="11"><br>    -follow<br>     如果finder命令遇到符号链接文件，就跟踪至链接所指向的文件<br>    -cpio<br>     对配对文件使用cpio命令，将这些文件备份到磁带设备中<br>    -atime/-ctime/-mtime与-amin/-cmin/-mmin的区别<br>     -atime n   ——查找系统中最后n<em>24小时访问的文件<br>     -amin n    ——查找系统中最后n分钟访问的文件<br>     -ctime n   ——查找系统中最后n</em>24小时被改变文件状态的文件<br>     -cmin n    ——查找系统中最后n分钟被改变文件状态的文件<br>     -mtime n   ——查找系统中最后n*24小时被改变文件数据的文件<br>     -mmin n    ——查找系统中最后n分钟被改变文件数据的文件</p>
+<p>  4.使用exec或ok来执行shell命令<br>    使用find命令时，只要把想要的操作写在一个文件里，就可以用exec来配合find命令查找，很方便。<br>    在有些操作系统中只允许-exec选项执行诸如ls或ls -l这样的命令。大多数用户使用这一选项是为了查找旧文件并删除它们。建议在真正执行rm命令删除文件之前，最好先用ls命令看一下，确认它们是所要删除的文件。<br>    exec选项后面跟随着所要执行的命令或脚本，然后是一对儿{ }，一个空格和一个\，最后是一个分号。为了使用exec选项，必须要同时使用print选项。如果验证一下find命令，会发现该命令只输出从当前路径起的相对路径及文件名。</p>
+<p>二、Linux中atime/ctime/mtime<br>  使用stat 命令来查询文件的inode信息，其中包括ctime atime mtime<br>  mtime：文件内容改变，ctime文件的状态改变，如chmod权限等。<br>  调整mtime，ctime会变。调整ctime，mtime不一定变化。</p>
+<p>  1.文件的atime/ctime/mtime</p>
+<pre><code>文件的 Access time，atime 是在读取文件或者执行文件时更改的任何对inode的访问都会使此处改变。
+文件的Modified time，mtime 是在写入文件时随文件内容的更改而更改的。
+文件的 Change time，ctime 是在写入文件、更改所有者、权限或链接设置时随 Inode 的内容更改而更改的。只要stat出来的内容发生改变就会发生改变。mtime的改变必然导致ctime的改变。
+
+mtime （modification time ）：在写入文件时随文件内容的更改而更改的时间。我们用ls -l看到的时间，就是mtime
+ctime （status time）：是在写入文件、更改所有者、权限或链接设置时随Inode的内容更改而更改的时间。相当于ls -l –time=ctime所看到的时间
+atime （access time）：读取文件或者执行文件时更改的时间。也就是用ls -l –time=atime看到的时间
+
+1）modification time (mtime,修改时间)：这个时间指的是文件内容修改的时间，而不是文件属性的修改，当数据内容修改时，这个时间就会改变，用命令ls -l默认显示的就是这个时间：
+2）status time （ctime,状态时间）：当一个文件的状态改变时，这个时间就会改变，例如更改了文件的权限与属性等，它就会改变。
+3）access time （atime,访问时间）：当读取文件内容时，就会更改这个时间，例如使用cat去读取/etc/man.config,那么该文件的atime就会改变。
+</code></pre><p>  2.文件夹的atime/ctime/mtime</p>
+<pre><code>文件夹的 Access time，atime 是在读取文件或者执行文件时更改的（我们只cd进入一个目录然后cd ..不会引起atime的改变，但ls一下就不同了）。
+文件夹的 Modified time，mtime 是在文件夹中有文件的新建、删除才会改变（如果只是改变文件内容不会引起mtime的改变，换句话说如果ls -f &lt;directory&gt;的结果发生改变mtime就会被刷新。这里可能有人要争论了：我进入dd这个文件夹vi了一个文件然后退出，前后ls -f &lt;directory&gt;的结果没有改变但是文件夹的mtime发生改变了……这点请主意vi命令在编辑文件时会在本文件夹下产生一 个&quot;.file.swp&quot;临时文件，该文件随着vi的退出而被删除……这就导致了mtime的改变）。
+文件夹的 Change time，ctime 基本同文件的ctime，其体现的是inode的change time。
+
+使用find命令时，常为其中的atime/ctime/mtime感到困惑，一直没彻底弄个明白，今天仔细看了以上两篇文章，总算有所领悟，总结如下：
+(1)、含义：
+   文件的 Access time，atime 是在读取文件或者执行文件时更改的；
+   文件的 Modified time，mtime 是在写入文件时随文件内容的更改而更改的；
+   文件的 Create time，ctime 是在写入文件、更改所有者、权限或链接设置时随 Inode 的内容更改而更改的。
+(2)、文件各种事件标记的显示方法
+   ls -lc filename         列出文件的 ctime 
+   ls -lu filename         列出文件的 atime 
+   ls -l filename          列出文件的 mtime 
+</code></pre><p>  参数说明<br>  -a ：修改atime<br>  -m ：修改mtime<br>  -c ：仅修改文件的时间（三个时间一起修改），若该文件不存在则不建立新的文件<br>  -d ：后面可以接想修改的日期而不用目前的日期，也可以使用 –date=”日期或时间”<br>  -t ：后面可以接想修改是时间而不用目前的时间，格式为[YYMMDDhhmm]     </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux系统篇/" rel="tag">#Linux系统篇</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/05/HeapSort/" rel="next" title="堆排序">
+                <i class="fa fa-chevron-left"></i> 堆排序
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/31/linux-vim/" rel="prev" title="vim编辑器的配置">
+                vim编辑器的配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="十三先生" />
+          <p class="site-author-name" itemprop="name">十三先生</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caochenyao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5253614710/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十三先生</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

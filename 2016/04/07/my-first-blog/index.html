@@ -1,0 +1,1380 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="哈希表," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="一、什么是哈希表？ 哈希表是根据关键字（key）而直接访问在内存存储位置的数据结构。它通过一个关键值的函数将所需的数据映射到表中的位置来访问数据，这个映射函数叫做散列函数，存放记录的数组叫做散列表。 二、什么是哈希冲突？ 不同的Key值经过哈希函数Hash(Key)处理以后可能产生相同的值——哈希地址，我们称这种情况为哈希冲突。任意的散列函数都不能避免产生冲突。**何为荷载因子:荷载因子 = 填入">
+<meta name="keywords" content="哈希表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="哈希表与哈希冲突">
+<meta property="og:url" content="http://caochenyao.github.io/2016/04/07/my-first-blog/index.html">
+<meta property="og:site_name" content="十三&#39;s blog">
+<meta property="og:description" content="一、什么是哈希表？ 哈希表是根据关键字（key）而直接访问在内存存储位置的数据结构。它通过一个关键值的函数将所需的数据映射到表中的位置来访问数据，这个映射函数叫做散列函数，存放记录的数组叫做散列表。 二、什么是哈希冲突？ 不同的Key值经过哈希函数Hash(Key)处理以后可能产生相同的值——哈希地址，我们称这种情况为哈希冲突。任意的散列函数都不能避免产生冲突。**何为荷载因子:荷载因子 = 填入">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/Hash1.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/Hash2.png">
+<meta property="og:image" content="http://o6lb63nu0.bkt.clouddn.com/Hash3.png">
+<meta property="og:updated_time" content="2016-05-13T14:02:23.700Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="哈希表与哈希冲突">
+<meta name="twitter:description" content="一、什么是哈希表？ 哈希表是根据关键字（key）而直接访问在内存存储位置的数据结构。它通过一个关键值的函数将所需的数据映射到表中的位置来访问数据，这个映射函数叫做散列函数，存放记录的数组叫做散列表。 二、什么是哈希冲突？ 不同的Key值经过哈希函数Hash(Key)处理以后可能产生相同的值——哈希地址，我们称这种情况为哈希冲突。任意的散列函数都不能避免产生冲突。**何为荷载因子:荷载因子 = 填入">
+<meta name="twitter:image" content="http://o6lb63nu0.bkt.clouddn.com/Hash1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> 哈希表与哈希冲突 | 十三's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">十三's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                哈希表与哈希冲突
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-04-07T23:58:15+08:00" content="2016-04-07">
+              2016-04-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/数据结构/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一、什么是哈希表？<br> 哈希表是根据关键字（key）而直接访问在内存存储位置的数据结构。它通过一个关键值的函数将所需的数据映射到表中的位置来访问数据，这个映射函数叫做散列函数，存放记录的数组叫做散列表。</p>
+<p>二、什么是哈希冲突？<br> 不同的Key值经过哈希函数Hash(Key)处理以后可能产生相同的值——哈希地址，我们称这种情况为哈希冲突。任意的散列函数都不能避免产生冲突。<br>**何为荷载因子:荷载因子 = 填入表中的元素个数/散列表的长度<br> 因为散列表的长度为定值，所以当荷载因子越大时，表中元素就越多则产生冲突的可能性越大，所以荷载因子一般被限定在0.7-0.8。</p>
+<p>三、解决哈希冲突的办法：<br>1、闭散列法<br>(1)线性探测<br>描述：线性探测是解决哈希冲突的一种方法，key值经过哈希函数处理就会得到对应的哈希地址，当这个地址已经存放了其他的key值时，向后寻找该地址的下一个地址，如果仍有其他的key值那么接着向后找，直到找到空闲的位置为止。<br><img src="http://o6lb63nu0.bkt.clouddn.com/Hash1.png" alt="1"><br>线性探测的代码实现</p>
+<pre><code>#pragma once
+#include&lt;string&gt;
+
+enum Status        //使用状态机来表示散列表每个位置的状态
+{                 
+    EXITS,         //存在
+    DELETED,       //删除
+    EMPTY,         //空
+};
+
+template&lt;class T&gt;                      //使用仿函数获得不同类型关键字的哈希值
+struct HashFuner
+{
+    size_t operator()(const T&amp; key)
+    {
+        return key;
+    }
+};
+
+static size_t BKDRHash(const char* str)//字符串的哈希算法
+{
+    size_t seed = 131;
+    size_t hash = 0;
+    while (*str)
+    {
+        hash = hash * seed + (*str++);
+    }
+    return (hash &amp; 0x7FFFFFFF);
+}
+
+template&lt;&gt;
+struct HashFuner&lt;string&gt;               //获得string类型的哈希值
+{
+    size_t operator()(const string&amp; key)
+    {
+        return BKDRHash(key.c_str());    
+    }    
+};
+
+
+template&lt;class T,class HashFun = HashFuner&lt;T&gt;&gt;
+class HashTable
+{
+public:
+    HashTable()                        //无参的构造函数
+        :_array(NULL)
+        , _status(0)
+        , _size(0)
+        , _capacity(0)
+    {}
+    HashTable(const size_t size)       //有参的构造函数
+        :_array(new T[size])
+        , _status(new Status[size])
+        , _size(0)
+        , _capacity(size)
+    {
+        for (size_t i = 0; i &lt; size;++i)
+        {
+            _status[i] = EMPTY;       //初始状态全部置为空
+        }
+    }
+    ~HashTable()                      //析构函数
+    {
+        if (_array)
+        {
+            delete[] _array;
+            delete[] _status;
+        }
+    }
+public:
+    bool Insert(const T&amp; key)
+    {
+        if (_size*10/_capacity == 8)     //荷载因子一般控制在0.7到0.8之间，当荷载因子达到0.8时需要增容
+        {
+            HashTable&lt;T,HashFun&gt; newHT(_capacity * 2); //开辟一个更长长度的新空间
+            for (size_t i = 0; i &lt; _capacity;++i)
+            {
+                if (_status[i] == EXITS)
+                {
+                    newHT.Insert(_array[i]);           //将原有空间里的所有数据插入到新的空间
+                }
+            }
+            Swap(newHT);                               //与原有空间交换
+        }
+        size_t index = Location(key);                  //获取关键字的位置
+        while (_status[index] == EXITS)                //如果该位置已有数据则向后寻找
+        {
+            ++index;
+            if (index == _capacity)                    //若已经走到表的尾部，则回到表头
+            {
+                index = 0;
+            }    
+        }
+        _array[index] = key;                           //插入数据
+        _status[index] = EXITS;                        //状态置为存在状态
+        ++_size;                                       //表中数据个数加一
+        return true;
+    }
+    size_t Location(const T&amp; key)                      //得到关键字的位置
+    {
+        HashFun hash;                                  //用仿函数获取不同类型关键字的哈希值
+        return hash(key)%_capacity;                    //计算得到关键字的位置
+    }
+    bool Remove(const T&amp; key)
+    {
+        size_t index = Location(key);                  //找到关键字的起始位置
+        while (_status[index] != EMPTY)                //如果位置不为空则寻找
+        {
+            if (_array[index] == key &amp;&amp; _status[index] == EXITS)
+                                                       //若该位置的关键字与要找的关键字相同并且状态为存在，说明已找到，
+                                                       //状态置为删除状态，并且数据个数减一(若状态为删除状态则表示已经删除)
+            {
+                _status[index] = DELETED;
+                _size--;
+            }
+            ++index;                                   //否则的话向后继续寻找
+            if (index == _capacity)
+            {
+                index = 0;
+            }
+        }
+        return false;
+    }
+    size_t Find(const T&amp; key)
+    {
+        size_t index = Location(key);                  //获得关键字的初始位置
+        while (_status[index] != EMPTY)                //如果位置不为空则寻找
+        {
+            if (_array[index] == key &amp;&amp; _status[index] == EXITS)
+                                                       //如果该关键字与要找的关键字相同且状态为存在，则返回位置
+                                                       //(若状态为删除状态则表示已经删除)
+            {
+                return index;
+            }
+            ++index;                                   //否则的话继续向后寻找
+            if (index == _capacity)
+            {
+                index = 0;
+            }
+        }
+        return -1;
+    }
+    void Print()
+    {
+        for (size_t i = 0; i &lt; _capacity;++i)
+        {
+            cout &lt;&lt; &quot;[&quot; &lt;&lt; i &lt;&lt; &quot;]&quot; &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _array[i] &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _status[i] &lt;&lt; endl;
+        }
+        cout &lt;&lt; &quot;----------------------------------&quot;&lt;&lt;endl;
+    }
+    void PrintStr()
+    {
+        for (size_t i = 0; i &lt; _capacity; ++i)
+        {
+            cout &lt;&lt; &quot;[&quot; &lt;&lt; i &lt;&lt; &quot;]&quot; &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _array[i].c_str() &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _status[i] &lt;&lt; endl;
+        }
+        cout &lt;&lt; &quot;----------------------------------&quot; &lt;&lt; endl;
+    }
+protected:
+    void Swap(HashTable&lt;T,HashFun&gt;&amp; ht)                //交换函数，用于扩容后两个空间的交换
+    {
+        swap(ht._array,_array);
+        swap(ht._status,_status);
+        swap(ht._size,_size);
+        swap(ht._capacity,_capacity);
+    }
+protected:
+    T* _array;              //散列表
+    Status* _status;        //状态机
+    size_t _size;           //数据个数
+    size_t _capacity;       //删列表长度
+};
+
+void TestLiner()
+{
+    HashTable&lt;int&gt; h1(10);
+    h1.Insert(89);
+    h1.Insert(19);
+    h1.Insert(49);
+    h1.Insert(18);
+    h1.Insert(9);
+    h1.Insert(89);
+    h1.Insert(19);
+    h1.Insert(49);
+    h1.Insert(18); 
+    h1.Insert(9);
+
+    h1.Print();
+
+    h1.Remove(9);
+    h1.Remove(29);
+
+    h1.Print();
+
+    size_t pos = h1.Find(18);
+    cout &lt;&lt; &quot;Find():&quot; &lt;&lt; pos &lt;&lt; endl;
+
+    HashTable&lt;string&gt; h2(5);
+    h2.Insert(&quot;abcd&quot;);
+    h2.Insert(&quot;dbca&quot;);
+
+    h2.PrintStr();
+}
+</code></pre><p>不难看出，线性探测解决哈希冲突的效率并不理想，尤其是当数据比较多的时候由此我们就可以接着来进行讨论线性探测的优化算法——二次探测。<br>(2)二次探测<br>描述：二次探测是线性探测的优化算法，在线性探测的基础上，查找方式略有不同线性探测在遇到对应的哈希地址有其他key值的情况下，查找的下一个地址用函数Hash(key)+n^2(n&gt;=0)进行查找，这样使得查找起来比线性探测更加的高效，但这样仍然不是很优化，所以接下来我们推出开链法，也就是俗称的哈希桶。<br><img src="http://o6lb63nu0.bkt.clouddn.com/Hash2.png" alt="2"><br>二次探测的代码实现<br>    //二次探测的实现与线性探测大致相同，只有一些细微的差别</p>
+<pre><code>#pragma once
+#include&lt;string&gt;
+
+enum Status
+{
+    EXITS,
+    DELETED,
+    EMPTY,
+};
+
+template&lt;class K&gt;
+struct HashFuner
+{
+    size_t operator()(const K&amp; key)
+    {
+        return key;
+    }
+};
+
+static size_t BKDRHash(const char* str)
+{
+    size_t seed = 131;
+    size_t hash = 0;
+    while (*str)
+    {
+        hash = hash * seed + (*str++);
+    }
+    return (hash &amp; 0x7FFFFFFF);
+}
+
+template&lt;&gt;
+struct HashFuner&lt;string&gt;
+{
+    size_t operator()(const string&amp; key)
+    {
+        return BKDRHash(key.c_str());
+    }
+};
+
+template&lt;class K, class V&gt;
+struct KeyValueNode               //定义结构体包含关键字和与关键字有关的信息
+{                                 //例如学生的学号(关键字)与成绩(与关键字有关的信息)
+    K key;
+    V value;
+    KeyValueNode()
+    {}
+    KeyValueNode(const K&amp; key, const V&amp; value)
+       :key(key)
+       ,value(value)
+    {}
+};
+
+template&lt;class K, class V, class HashFun = HashFuner&lt;K&gt;&gt;
+class HashTable
+{
+    typedef KeyValueNode&lt;K, V&gt; KVNode;
+public:
+    HashTable()
+        :_array(NULL)
+        , _status(0)
+        , _size(0)
+        , _capacity(0)
+    {}
+    HashTable(const size_t size)
+        :_array(new KVNode[size])
+        , _status(new Status[size])
+        , _size(0)
+        , _capacity(size)
+    {
+        for (size_t i = 0; i &lt; size; ++i)
+        {
+            _status[i] = EMPTY;
+        }
+    }
+    ~HashTable()
+    {
+        if (_array)
+        {
+            delete[] _array;
+            delete[] _status;
+        }
+    }
+    HashTable(const HashTable&lt;K,V&gt;&amp; ht)
+    {
+        HashTable&lt;K, V&gt; newHT(ht._capacity);
+        for (size_t i = 0; i &lt; ht._capacity; ++i)
+        {
+            if (ht._status[i] == EXITS)
+            {
+                newHT.Insert(ht._array[i].key, ht._array[i].value);
+            }
+        }
+        Swap(newHT);
+    }
+    HashTable&lt;K, V&gt;&amp; operator=(const HashTable&lt;K, V&gt;&amp; ht)
+    {
+        HashTable&lt;K, V&gt; newTable(ht);
+        Swap(newTable);
+        return *this;
+    }
+public:
+    bool Insert(const K&amp; key,const V&amp; value)
+    {
+        if (_size * 10 / _capacity == 8)
+        {
+            HashTable&lt;K, V&gt; newHT(_capacity * 2);
+            for (size_t i = 0; i &lt; _capacity; ++i)
+            {
+                if (_status[i] == EXITS)
+                {
+                    newHT.Insert(_array[i].key, _array[i].value);
+                }
+            }
+            Swap(newHT);
+        }
+        size_t index = Location0(key);
+        size_t i = 1;
+        while (_status[index] == EXITS)
+        {
+            index = Location2(index,i++);
+            if (index == _capacity)
+            {
+                index = 0;
+            }
+        }
+        _array[index].key = key;
+        _array[index].value = value;
+        _status[index] = EXITS;
+        ++_size;
+        return true;
+    }
+    size_t Location0(const K&amp; key)              //求取的是关键字的初始地址
+    {
+        HashFun hash;
+        return hash(key) % _capacity;
+    }
+    size_t Location2(size_t prev,size_t i)      //查找下一个地址用函数Hash(key)+n^2(n&gt;=0)进行查找
+    {                                           //通过化简得到前一个位置的哈希值与后一个位置的哈希值的关系
+        return (prev + 2 * i - 1) % _capacity;  //后一位置的哈希值为前一个位置哈希值的二倍减一
+    }
+    bool Remove(const K&amp; key,size_t n)
+    {
+        size_t index = Location0(key);
+        size_t i = 1;
+        while (_status[index] != EMPTY)
+        {
+            if (_array[index].key == key &amp;&amp; _status[index] == EXITS)
+            {
+                _status[index] = DELETED;
+                _size--;
+            }
+            index = Location2(index, i++);
+            if (index == _capacity)
+            {
+                index = 0;
+            }
+        }
+        return false;
+    }
+    size_t Find(const K&amp; key, size_t n)
+    {
+        size_t index = Location(key);
+        size_t i = 1;
+        while (_status[index] != EMPTY)
+        {
+            if (_array[index].key == key &amp;&amp; _status[index] == EXITS)
+            {
+                return index;
+            }
+            index = Location2(index, i++);
+            if (index == _capacity)
+            {
+                index = 0;
+            }
+        }
+        return -1;
+    }
+    void Print()
+    {
+        for (size_t i = 0; i &lt; _capacity; ++i)
+        {
+            cout &lt;&lt; &quot;[&quot; &lt;&lt; i &lt;&lt; &quot;]&quot; &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _array[i].key &lt;&lt; &quot;-&quot;;
+            cout &lt;&lt; _array[i].value &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _status[i] &lt;&lt; endl;
+        }
+        cout &lt;&lt; &quot;----------------------------------&quot; &lt;&lt; endl;
+    }
+    void PrintStr()
+    {
+        for (size_t i = 0; i &lt; _capacity; ++i)
+        {
+            cout &lt;&lt; &quot;[&quot; &lt;&lt; i &lt;&lt; &quot;]&quot; &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _array[i].key.c_str() &lt;&lt; &quot;-&quot;;
+            cout &lt;&lt; _array[i].value.c_str() &lt;&lt; &quot;:&quot;;
+            cout &lt;&lt; _status[i] &lt;&lt; endl;
+        }
+        cout &lt;&lt; &quot;----------------------------------&quot; &lt;&lt; endl;
+    }
+protected:
+    void Swap(HashTable&lt;K,V&gt;&amp; ht)
+    {
+        swap(ht._array, _array);
+        swap(ht._status, _status);
+        swap(ht._size, _size);
+        swap(ht._capacity, _capacity);
+    }
+protected:
+    KVNode* _array;
+    Status* _status;
+    size_t _size;
+    size_t _capacity;
+};
+
+void TestTwice()
+{
+    HashTable&lt;int, int&gt; ht(5);
+    ht.Insert(12,14);
+    ht.Insert(11,50);
+    ht.Insert(24,22);
+    ht.Insert(1,18);
+    ht.Insert(4,55);
+    ht.Print();
+
+    HashTable&lt;int, int&gt; ht1(ht);
+    ht1.Print();
+
+    HashTable&lt;int, int&gt; ht2;
+    ht2 = ht;
+    ht2.Print();
+
+    HashTable&lt;string, string&gt; htstr(10);
+    htstr.Insert(&quot;字典&quot;, &quot;dictionary&quot;);
+    htstr.Insert(&quot;清除&quot;, &quot;clear,destroy&quot;);
+    htstr.Insert(&quot;手机&quot;, &quot;mobilephone&quot;);
+    htstr.Insert(&quot;电脑&quot;, &quot;pc&quot;);
+    htstr.Insert(&quot;吸血鬼&quot;, &quot;vampire&quot;);
+    htstr.PrintStr();
+
+    HashTable&lt;string, string&gt; htstr1(htstr);
+    htstr1.PrintStr();
+}
+</code></pre><p>2、开链法(哈希桶)<br>描述：开链法使用的是单链表与顺序表相结合的算法，顺序表的每一个位置链接的的是相应key值对应的单链表的头结点，那么当某个key值找到对应的哈希地址时，将该key值插入到该链表中(我实现时用的是头插)，这样建立起来的散列表无论是存储key值还是查找key值，相比起闭散列法中的两种方法都比较高效。<br><img src="http://o6lb63nu0.bkt.clouddn.com/Hash3.png" alt="3"><br>开链法的代码实现</p>
+<pre><code>开链法与闭散列法的区别在于散列表的每一个位置存放的不是数据，而是每个位置都链有一个单链表，而当出现
+哈希冲突时不用再先后寻找空位置，而是直接将该数据头插到对应位置的单链表中。
+#pragma once
+#include&lt;vector&gt;
+#include&lt;string&gt;
+
+template&lt;class K&gt;
+struct HashFuner
+{
+    size_t operator()(const K&amp; key)
+    {
+        return key;
+    }
+};
+
+static size_t BKDRHash(const char* str)
+{
+    size_t seed = 131;
+    size_t hash = 0;
+    while (*str)
+    {
+        hash = hash * seed + (*str++);
+    }
+    return (hash &amp; 0x7FFFFFFF);
+}
+
+template&lt;&gt;
+struct HashFuner&lt;string&gt;
+{
+    size_t operator()(const string&amp; key)
+    {
+        return BKDRHash(key.c_str());
+    }
+};
+
+template&lt;class K,class V&gt;
+struct HashTableNode
+{
+    K _key;
+    V _value;
+    HashTableNode&lt;K,V&gt;* _next;
+    HashTableNode(const K&amp; key, const V&amp; value)
+        :_key(key)
+        , _value(value)
+        , _next(NULL)
+    {}
+};
+
+template&lt;class K, class V, class HashFun = HashFuner&lt;K&gt;&gt;
+class HashTable
+{
+public:
+    typedef HashTableNode&lt;K, V&gt; KVNode;
+public:
+    HashTable()
+        :_size(0)
+    {}
+    HashTable(size_t size)
+    {
+        _tables.resize(size);
+    }
+    ~HashTable()
+    {
+        Destroy();
+    }
+    HashTable(const HashTable&lt;K, V&gt;&amp; ht)
+    {
+        HashTable&lt;K, V&gt; newTable(ht._tables.size());     
+        for (size_t i = 0; i &lt; ht._tables.size();++i)
+        {
+            //KVNode* &amp; head = newTable._tables[i];
+            KVNode* cur = ht._tables[i];
+            if (cur == NULL)
+            {
+                continue;
+            }
+            while (cur)
+            {
+                /*KVNode* tmp = cur;
+                cur = cur-&gt;_next;
+                tmp-&gt;_next = head;
+                head = tmp;*/
+                newTable.Insert(cur-&gt;_key,cur-&gt;_value);
+                cur = cur-&gt;_next;
+            }
+
+        }
+        Swap(newTable);
+    }
+    HashTable&lt;K, V&gt;&amp; operator=(const HashTable&lt;K, V&gt;&amp; ht)
+    {
+        if (&amp;ht != this)
+        {
+            HashTable&lt;K, V&gt; newTable(ht);
+            Swap(newTable);
+        }
+        return *this;
+    }
+public:
+    bool Insert(const K&amp; key,const V&amp; value)
+    {
+        //增容
+        _CreateCapacity();
+        //插入数据
+        size_t index = Location(key);
+        KVNode* cur = new KVNode(key,value);
+        if (_tables[index] == NULL)
+        {
+            cur-&gt;_next = _tables[index];
+            _tables[index] = cur;
+            ++_size;
+        }
+        else
+        {
+            KVNode* tmp = _tables[index];
+            while (tmp)
+            {
+                if (tmp-&gt;_key == key)
+                    return false;
+                tmp = tmp-&gt;_next;
+            }
+            cur-&gt;_next = _tables[index];
+            _tables[index] = cur;
+        }
+        return true;
+    }
+    size_t Location(const K&amp; key)
+    {
+        HashFuner&lt;K&gt; hf;
+        return hf(key) % _tables.size();
+    }
+    void Print()
+    {
+        for (size_t i = 0; i &lt; _tables.size();++i)
+        {
+            printf(&quot;Table[%d]-&gt;&quot;, i);
+            KVNode* cur = _tables[i];
+            while (cur)
+            {
+                cout &lt;&lt; &quot;[&quot; &lt;&lt; cur-&gt;_key &lt;&lt; &quot;:&quot; &lt;&lt; cur-&gt;_value &lt;&lt; &quot;]-&gt;&quot;;
+                cur = cur-&gt;_next;
+            }
+            cout &lt;&lt; &quot;NULL&quot; &lt;&lt; endl;
+        }
+        cout &lt;&lt; &quot;-------------------------------------&quot; &lt;&lt; endl;
+    }
+    bool Remove(const K&amp; key)
+    {
+        size_t index = Location(key);
+        KVNode* cur = _tables[index];
+        if (cur == NULL)
+        {
+            return true;
+        }
+        if (cur-&gt;_next == NULL)
+        {
+            delete cur;
+            _tables[index] = NULL;
+            return true;
+        }
+        while (cur)
+        {
+            KVNode* prev = cur;
+            KVNode* tmp = cur-&gt;_next;
+            if (tmp-&gt;_key == key)
+            {
+                prev-&gt;_next = tmp-&gt;_next;
+                delete tmp;
+                return true;
+            }
+            cur = cur-&gt;_next;
+        }
+        return false;
+    }
+    KVNode* Find(const K&amp; key)
+    {
+        size_t index = Location(key);
+        KVNode* cur = _tables[index];
+        while (cur)
+        {
+            if (cur-&gt;_key == key)
+            {
+                return cur;
+            }
+            cur = cur-&gt;_next;
+        }
+        return NULL;
+    }
+protected:
+    void Swap(HashTable&lt;K,V&gt;&amp; ht)
+    {
+        _tables.swap(ht._tables);
+        swap(_size,ht._size);
+    }
+    void Destroy()
+    {
+        for (size_t i = 0; i &lt; _tables.size(); ++i)
+        {
+            KVNode* cur = _tables[i];
+            while (cur)
+            {
+                KVNode* tmp = cur;
+                cur = cur-&gt;_next;
+                delete tmp;
+            }
+            _tables[i] = NULL;
+        }
+    }
+    void _CreateCapacity()                        //这里的设置散列表的容量时使用一个数组给定的容量值
+    {
+        static const int _PrimeSize = 28;
+        static const unsigned long _PrimeList[_PrimeSize] =
+        {
+            53ul, 97ul, 193ul, 389ul, 769ul,
+            1543ul, 3079ul, 6151ul, 12289ul, 24593ul,
+            49157ul, 98317ul, 196613ul, 393241ul, 786433ul,
+            1572869ul, 3145739ul, 6291469ul, 12582917ul, 25165843ul,
+            50331653ul, 100663319ul, 201326611ul, 402653189ul, 805306457ul,
+            1610612741ul, 3221225473ul, 4294967291ul
+        };
+        if (_size == _tables.size())
+        {
+            HashTable&lt;K,V&gt; ht;
+            for (int i = 0; i &lt; _PrimeSize;++i)
+            {
+                if (_size &lt; _PrimeList[i])
+                {
+                    ht._tables.resize(_PrimeList[i]);
+                    break;
+                }        
+            }
+            for (size_t i = 0; i &lt; _size;++i)
+            {
+                KVNode* cur = _tables[i];
+                while (cur)
+                {    
+                    ht.Insert(cur-&gt;_key, cur-&gt;_value);
+                    cur = cur-&gt;_next;
+                }
+            }
+            _tables.swap(ht._tables);
+        }
+    }
+protected:
+    vector&lt;KVNode*&gt; _tables;
+    size_t _size;
+};
+
+void TestBucket()
+{
+    HashTable&lt;int,int&gt; ht(2);
+    ht.Insert(1,25);
+    ht.Insert(11, 35);
+    ht.Insert(12, 21);
+    ht.Insert(16, 36);
+    ht.Insert(19, 81);
+    ht.Insert(54, 0);
+    //ht.Print();
+
+    //ht.Remove(12);
+    //ht.Print();
+
+    //HashTableNode&lt;int, int&gt;* tmp = ht.Find(54);
+    //cout &lt;&lt; &quot;Find?&quot; &lt;&lt; tmp-&gt;_key &lt;&lt; &quot;:&quot; &lt;&lt; tmp-&gt;_value &lt;&lt; endl;
+
+    HashTable&lt;int, int&gt; ht1(ht);
+    ht1.Print();
+
+    HashTable&lt;int, int&gt; ht2;
+    ht2 = ht1;
+    ht2.Print();
+
+    HashTable&lt;string, string&gt; htstr(10);
+    htstr.Insert(&quot;字典&quot;,&quot;dictionary&quot;);
+    htstr.Insert(&quot;清除&quot;, &quot;clear,destroy&quot;);
+    htstr.Insert(&quot;手机&quot;, &quot;mobilephone&quot;);
+    htstr.Insert(&quot;电脑&quot;, &quot;pc&quot;);
+    htstr.Insert(&quot;吸血鬼&quot;, &quot;vampire&quot;);
+    htstr.Print();
+
+    HashTable&lt;string, string&gt; htstr1(htstr);
+    htstr1.Print();
+}
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/哈希表/" rel="tag">#哈希表</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/12/BinaryTree/" rel="prev" title="二叉树">
+                二叉树 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="十三先生" />
+          <p class="site-author-name" itemprop="name">十三先生</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/caochenyao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5253614710/profile?topnav=1&wvr=6&is_all=1" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十三先生</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
